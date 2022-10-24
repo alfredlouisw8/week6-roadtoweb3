@@ -1,12 +1,20 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.4;  //Do not change the solidity version as it negativly impacts submission grading
+pragma solidity 0.8.4; //Do not change the solidity version as it negativly impacts submission grading
 
-contract ExampleExternalContract {
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-  bool public completed;
+contract ExampleExternalContract is Ownable {
+    bool public completed;
 
-  function complete() public payable {
-    completed = true;
-  }
+    function complete() public payable {
+        completed = true;
+    }
 
+    function retrieveEther(address to) public {
+        completed = false;
+        (bool sent, bytes memory data) = to.call{value: address(this).balance}(
+            ""
+        );
+        require(sent, "RIP; retrieval failed :( ");
+    }
 }
